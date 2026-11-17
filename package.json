@@ -1,0 +1,11 @@
+{
+  "name": "rehome-furniture-prototype",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Responsive Traditional Chinese second-hand furniture marketplace prototype",
+  "scripts": {
+    "dev": "node server.mjs",
+    "check": "node --check dist/app.js && node --check dist/order-flow.js",
+    "test": "node --test app.test.mjs"
+  }
+}
