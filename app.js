@@ -5,7 +5,8 @@ const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const icon = name => `<svg class="icon" aria-hidden="true"><use href="#i-${name}"/></svg>`;
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const money = value => `NT$ ${Number(value).toLocaleString('zh-TW')}`;
-const image = id => `assets/${id}.jpg`;
+const image = id => `${id}.jpg`;
+const storedPhoto = value => typeof value === 'string' && /^assets\/photo-[a-z0-9-]+\.jpg$/.test(value) ? value.slice(7) : value;
 const categories = { sofa:'沙發', chair:'椅子', table:'桌子', storage:'櫃子・收納', bed:'床架', lamp:'燈具' };
 const locations = ['台北市','新北市','桃園市','台中市','高雄市'];
 const catalog = [
@@ -23,10 +24,10 @@ function readStorage(key, fallback, validate) {
   try { const value = JSON.parse(localStorage.getItem(key)); return validate(value) ? value : fallback; }
   catch { return fallback; }
 }
-const validListing = item => item && typeof item.id === 'string' && typeof item.title === 'string' && Object.hasOwn(categories,item.category) && Number.isFinite(item.price) && item.price > 0 && typeof item.photo === 'string' && /^(data:image\/(jpeg|png|webp);base64,|assets\/photo-[a-z0-9-]+\.jpg$)/.test(item.photo);
-let listings = readStorage('rehome-listings', [], value => Array.isArray(value) && value.every(validListing));
+const validListing = item => item && typeof item.id === 'string' && typeof item.title === 'string' && Object.hasOwn(categories,item.category) && Number.isFinite(item.price) && item.price > 0 && typeof item.photo === 'string' && /^(data:image\/(jpeg|png|webp);base64,|(?:assets\/)?photo-[a-z0-9-]+\.jpg$)/.test(item.photo);
+let listings = readStorage('rehome-listings', [], value => Array.isArray(value) && value.every(validListing)).map(item=>({...item,photo:storedPhoto(item.photo)}));
 let favorites = new Set(readStorage('rehome-favorites', [], value => Array.isArray(value) && value.every(id => typeof id === 'string')));
-let orders = readStorage('rehome-orders', [], value => Array.isArray(value) && value.every(item => item && typeof item.productId === 'string' && Number.isFinite(item.total) && typeof item.title === 'string'));
+let orders = readStorage('rehome-orders', [], value => Array.isArray(value) && value.every(item => item && typeof item.productId === 'string' && Number.isFinite(item.total) && typeof item.title === 'string')).map(item=>({...item,photo:storedPhoto(item.photo)}));
 const state = {category:'all',search:'',region:'all',price:'all',condition:'all',sort:'recommended',favoritesOnly:false};
 const dialog = $('#main-dialog');
 const dialogContent = $('#dialog-content');
