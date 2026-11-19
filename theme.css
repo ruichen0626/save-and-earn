@@ -532,3 +532,8 @@ dialog::backdrop { background: #20383d70; }
   .product-title { font-size: 16px; }
   .product-price { font-size: 21px; }
 }
+
+/* Student photo update */
+.photo-source { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.photo-source a { color: var(--blue); text-decoration: underline; }
+.student-detail-photo { object-fit: contain; background: #e9eeeb; }
